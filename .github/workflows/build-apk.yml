@@ -1,0 +1,31 @@
+name: Generar APK de Setalia
+
+on:
+  workflow_dispatch:
+  push:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.9'
+
+      - name: Descomprimir y compilar
+        run: |
+          unzip -q Setalia-Espana-Android.zip
+          cd setalia-android
+          gradle --no-daemon assembleDebug
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Setalia-Espana-APK
+          path: setalia-android/app/build/outputs/apk/debug/app-debug.apk
